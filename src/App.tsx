@@ -1,35 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react';
+import OpenAI from "openai";
+import { Message } from './interfaces/message';
 import './App.css'
 
+
+const API_KEY: string | undefined=  import.meta.env.VITE_OPENAI_API_KEY
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState<Message | null> ();
+
+  const startConversation = "Hola que tal estas? Me llamo daniel, cuentame algo sobre ti"
+
+  const openai = new OpenAI(
+    {
+      apiKey: API_KEY,
+      dangerouslyAllowBrowser: true,
+    }
+  );
+  const fetchCompletion = async () => {
+    
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: startConversation,
+          },
+        ],
+      });
+
+      setMessage(completion.choices[0].message); 
+
+    } catch (error) {
+      console.error("Error fetching OpenAI completion: EL FALLO ES QUI EN EL CATCH");
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletion();
+  }, []); 
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Chat Virtual Mentor</h1>
+      {message ? (
+        <div>
+          {/* <h2>Role: {text.role}</h2> */}
+          <h3>{message.content}</h3>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+      <h3>{startConversation}</h3>
+      <form>
+        <input
+        type='text'
+        placeholder='Start de conversation with virtual mentor'
+        name='message'/>
+        <button>Send</button>
+      </form>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
