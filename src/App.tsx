@@ -1,87 +1,90 @@
-import { useEffect, useState } from 'react';
+import { useState } from "react";
 import OpenAI from "openai";
-import './App.css'
+import "./App.css";
 
-
-const API_KEY: string | undefined=  import.meta.env.VITE_OPENAI_API_KEY
+const API_KEY: string | undefined = import.meta.env.VITE_OPENAI_API_KEY;
 
 function App() {
+  const [message, setMessage] = useState<string>(""); 
+  const [messages, setMessages] = useState<OpenAI.Chat.Completions.ChatCompletionMessageParam[]>([
+    { role: "system", content: "Eres un asistente útil que responde en español." },
+    { role: "assistant", content: "¿En qué puedo ayudarte hoy?" },
+  ]); 
+  const [loading, setLoading] = useState<boolean>(false); 
 
-  const [message, setMessage] = useState<string> ("");
-  const [sentMessage, setSentMessage] = useState<string>("Hola, envia tu primer mensaje a nuestro Virtual Mentor");
-  const [response, setResponse] = useState<string | null>("Respuesta IA")
-
-  const openai = new OpenAI(
-    {
-      apiKey: API_KEY,
-      dangerouslyAllowBrowser: true,
-    }
-  );
-
+  const openai = new OpenAI({
+    apiKey: API_KEY,
+    dangerouslyAllowBrowser: true,
+  });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
-  const fetchCompletion = async (message: string) => {
-    
+  const fetchCompletion = async (updatedMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]) => {
+    setLoading(true);
     try {
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system",
-            content: "You are a helpful assistant." },
-          {
-            role: "user",
-            content: message,
-          },
-        ],
+        messages: updatedMessages,
       });
 
-      setResponse(completion.choices[0].message.content || null);
+      const aiResponse = completion.choices[0].message?.content || "";
+
+      setMessages((prevMessages) => [...prevMessages, { role: "assistant", content: aiResponse } as OpenAI.Chat.Completions.ChatCompletionMessageParam,]);
+      setLoading(false);
 
     } catch (error) {
-      console.error("Error fetching OpenAI completion: EL FALLO ES AQUI EN EL CATCH");
+      console.error("Error fetching OpenAI completion:", error);
+      setLoading(false);
     }
   };
 
-  const handleForm = (event: React.FormEvent)=> {
+  const handleForm = (event: React.FormEvent) => {
     event.preventDefault();
-    if (message === "") {
-      alert("Escribe alguna consulta")
+    if (message.trim() === "") {
+      alert("Escribe alguna consulta");
       return;
     }
-    setSentMessage(message);
-    setMessage("");
 
-    fetchCompletion(message);
-    
+    // Agregar el mensaje del usuario al historial
+    const userMessage = { role: "user", content: message } as OpenAI.Chat.Completions.ChatCompletionMessageParam;
+
+    const updatedMessages = [...messages, userMessage];
+
+    setMessages(updatedMessages);
+    setMessage(""); 
+
+    fetchCompletion(updatedMessages); 
   };
 
   return (
     <>
-      <h1>Chat Virtual Mentor</h1>
+      <h1>Asistente Virtual Mentor</h1>
+
+      <div>
+        {messages
+          .filter((msg) => msg.role !== "system") 
+          .map((msg, index) => (
+            <p key={index}>
+              <strong>{msg.role === "user" ? "Tú:" : "Asistente:"}</strong> {typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content)}
+            </p>
+          ))}
+      </div>
+
+      {loading && <p>El asistente está pensando...</p>}
+
       <form onSubmit={handleForm}>
         <input
           type="text"
-          placeholder="Escribe tu mensaje..."
+          placeholder="Escribe tu consulta..."
           value={message}
-          onChange={handleChange} 
+          onChange={handleChange}
         />
-        <button type="submit">Enviar</button> 
+        <button type="submit" disabled={loading}>
+          {loading ? "Cargando..." : "Enviar"}
+        </button>
       </form>
-
-      {sentMessage && (
-      <div>
-        <strong>Mensaje enviado:</strong> {sentMessage}
-      </div>
-      )}
-
-      {response && (
-        <div>
-          <strong>Respuesta de OpenAI:</strong> {response}
-        </div>
-      )}
     </>
   );
 }
