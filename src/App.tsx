@@ -1,42 +1,55 @@
 import { useState, useEffect } from 'react';
-import { IThread, ChatCompletionMessage } from './interfaces/interfaces';
-import { signOut } from 'firebase/auth'; 
+import { IThread } from './interfaces/interfaces';
 import { Threads } from './components/threads';
 import { Conversations } from './components/conversations';
 import { SendMessage } from './components/sendMessage';
 import { handleForm } from './utils/handleForm'; 
 import { handleChange } from './utils/handleChange'; 
 import { infoCompany } from './utils/info';
-import { getDocs, collection } from "firebase/firestore";
-import { db, auth } from './firebase/firebaseConfig';
+import { fetchUserData, createNewThread } from './utils/firestore';
+import { handleLogOut } from './utils/auth';
 import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase/firebaseConfig';
+
 
 import './App.css';
+
 
 function App() {
 
   const [threads, setThreads] = useState<IThread[]>([]); 
   const [currentThreadId, setCurrentThreadId] = useState<string>(''); 
   const [input, setInput] = useState<string>(''); 
+  const [userName, setUserName] = useState<string | null>(null);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    const testFirestoreConnection = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "testCollection"));
-        querySnapshot.forEach((doc) => {
-          console.log(`${doc.id} => ${doc.data()}`);
-        });
-      } catch (error) {
-        console.error("Error fetching documents: ", error);
-      }
-    };
-
-    testFirestoreConnection();
+    // Recuperar los datos de usuario desde Firestore
+    fetchUserData(setUserName, setThreads);
   }, []);
 
- 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+        setUserName(user.displayName || "Usuario");
+        try {
+          await fetchUserData(setUserName, setThreads);
+        } catch (error) {
+          console.error("Error al cargar los datos del usuario:", error);
+        }
+      } else {
+        console.log("No hay usuario autenticado.");
+        setUserName(null);
+        setThreads([]);
+      }
+    });
+  
+    return () => unsubscribe(); // Limpia el listener al desmontar
+  }, []);
+  
+
   const onNewThread = (initialMessage: string) => {
     const newThread: IThread = {
       id: crypto.randomUUID(),
@@ -49,36 +62,24 @@ function App() {
         { role: 'user', content: initialMessage },
       ],
     };
-
-    setThreads((prev) => [...prev, newThread]); 
-    setCurrentThreadId(newThread.id); 
+    createNewThread(newThread, setThreads, setCurrentThreadId);
   };
-
   
   const onThreadSelect = (threadId: string) => {
     setCurrentThreadId(threadId);
   };
 
-  const handleLogOut = async () => {
-    try {
-      await signOut(auth); 
-      navigate("/"); 
-    } catch (error) {
-      console.error("Error al cerrar sesión: ", error);
-    }
-  };
-
   return (
     <>
-      <h1>Asistente Virtual Mentor</h1>
+      <h1>Hola {userName} soy tu Asistente Virtual Mentor</h1>
       <Threads threads={threads} currentThreadId={currentThreadId} onThreadSelect={onThreadSelect} onNewThread={onNewThread} />
       <Conversations currentThreadId={currentThreadId} threads={threads} />
       <SendMessage
         input={input}
-        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)} 
+        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)}
         handleChange={(e) => handleChange(e, setInput)} 
       />
-      <button onClick={handleLogOut}>Cerrar Sesión</button>
+      <button onClick={() => handleLogOut(navigate)}>Cerrar Sesión</button>
     </>
   );
 }

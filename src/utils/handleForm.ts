@@ -3,6 +3,7 @@ import { validateInput } from './validateInput';
 import { updateThreadWithUserMessage } from './updateThreads';
 import { getAssistantResponse } from './chatAssistant';
 import { clearInput } from './clearInput';
+import { saveMessageToFirestore } from './firestore';
 
 export const handleForm = async (
   e: React.FormEvent,
@@ -15,22 +16,49 @@ export const handleForm = async (
 ) => {
   e.preventDefault();
 
-  // Validar la entrada antes de proceder
+  // Validar entrada
   if (!validateInput(input)) {
     return;
   }
 
   const userMessage: ChatCompletionMessage = { role: 'user', content: input };
 
-  // Si no hay un hilo actual, crea uno nuevo
   if (!currentThreadId) {
     onNewThread(input);
   } else {
-    // Si ya hay un hilo, agrega el mensaje al hilo actual
-    updateThreadWithUserMessage(currentThreadId, threads, userMessage, setThreads);
+    // Actualizar estado local
+    updateThreadWithUserMessage(currentThreadId, userMessage, setThreads);
 
-    // Consultar al asistente usando la función externa
-    getAssistantResponse(currentThreadId, threads, userMessage, setThreads);
+
+
+    console.log('Guardando mensaje del usuario en Firestore:', {
+      threadId: currentThreadId,
+      role: 'user',
+      content: input,
+    });
+    await saveMessageToFirestore(currentThreadId, 'user', input);
+    
+    // Obtener respuesta del asistente
+    const assistantResponse = await getAssistantResponse(
+      currentThreadId,
+      threads,
+      { role: 'user', content: input },
+      setThreads
+    );
+    
+    // Guardar la respuesta del asistente en Firestore
+    if (assistantResponse) {
+      console.log('Guardando respuesta del asistente en Firestore:', {
+        threadId: currentThreadId,
+        role: 'assistant',
+        content: assistantResponse.content,
+      });
+      await saveMessageToFirestore(
+        currentThreadId,
+        'assistant',
+        assistantResponse.content
+      );
+    }
   }
 
   // Limpiar el campo de entrada

@@ -11,11 +11,11 @@ const openai = new OpenAI({
 
 // Función para obtener la respuesta del asistente
 export const getAssistantResponse = async (
-  currentThreadId: string, 
-  threads: IThread[], 
+  currentThreadId: string,
+  threads: IThread[],
   userMessage: ChatCompletionMessage,
-  setThreads: React.Dispatch<React.SetStateAction<IThread[]>> 
-) => {
+  setThreads: React.Dispatch<React.SetStateAction<IThread[]>>
+): Promise<ChatCompletionMessage | null> => { // Se añade Promise<ChatCompletionMessage | null>
   try {
     // Encontrar el hilo actual
     const currentThread = threads.find((t) => t.id === currentThreadId);
@@ -46,8 +46,15 @@ export const getAssistantResponse = async (
             : thread
         )
       );
+
+      // Retornar la respuesta del asistente
+      return assistantResponse; // Se devuelve el mensaje del asistente
     }
+
+    // Si no hay respuesta del asistente, se devuelve null
+    return null;
   } catch (error) {
     console.error('Error al consultar al asistente:', error);
+    return null; // Devolver null en caso de error
   }
 };

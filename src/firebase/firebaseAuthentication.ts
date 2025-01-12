@@ -7,7 +7,7 @@ import {
   GoogleAuthProvider
   } from "firebase/auth";
 import { auth, db } from "./firebaseConfig";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, addDoc } from "firebase/firestore";
 
 
 //login user and password
@@ -23,6 +23,19 @@ export const signUpWithEmail = async (email: string, password: string, name: str
       createdAt: new Date().toISOString(),
     });
 
+    // Crear el primer hilo en la subcolección `threads`
+    const threadsRef = collection(db, "users", userCredential.user.uid, "threads");
+    const newThread = {
+      title: "Primer Hilo",
+      createdAt: new Date().toISOString(),
+      messages: [
+        { role: 'system', content: "Este es tu primer hilo de conversación." }
+      ]
+    };
+
+    // Agregar el hilo a la subcolección `threads`
+    await addDoc(threadsRef, newThread);
+
     return userCredential.user;
   } catch (error) {
     console.error("Error al registrar usuario:", error);
@@ -33,20 +46,18 @@ export const signUpWithEmail = async (email: string, password: string, name: str
 //sign in user and password
 export const signInWithEmail = async (email: string, password: string) => {
   try {
+    console.log("Intentando iniciar sesión en Firebase...");
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-    // Verificar si el usuario tiene un documento en Firestore
-    const userRef = doc(db, "users", userCredential.user.uid);
-    const userSnapshot = await getDoc(userRef);
-
-    if (!userSnapshot.exists()) {
-      throw new Error("Usuario no registrado en la base de datos.");
-    }
-
     return userCredential.user;
-  } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    throw error;
+  } catch (error: any) {
+    if (error.code === "auth/user-not-found") {
+      throw new Error("Usuario no encontrado. Por favor, regístrate primero.");
+    } else if (error.code === "auth/wrong-password") {
+      throw new Error("Contraseña incorrecta. Intenta de nuevo.");
+    } else if (error.code === "auth/invalid-credential") {
+      throw new Error("Usuario no encontrado. Verifica que el mail y contraseña son correctos.");
+    }
+    throw new Error(`Error desconocido: ${error.message}`);
   }
 };
 
