@@ -3,7 +3,7 @@ import { validateInput } from './validateInput';
 import { updateThreadWithUserMessage } from './updateThreads';
 import { getAssistantResponse } from './chatAssistant';
 import { clearInput } from './clearInput';
-import { saveMessageToFirestore } from './firestore';
+import { saveMessageToThread } from './firestore'; 
 
 export const handleForm = async (
   e: React.FormEvent,
@@ -12,55 +12,62 @@ export const handleForm = async (
   threads: IThread[],
   setThreads: React.Dispatch<React.SetStateAction<IThread[]>>,
   setInput: React.Dispatch<React.SetStateAction<string>>,
-  onNewThread: (initialMessage: string) => void
+  onNewThread: (initialMessage: string) => Promise<string> // Modificamos para que devuelva el ID del hilo
 ) => {
   e.preventDefault();
 
-  // Validar entrada
   if (!validateInput(input)) {
     return;
   }
 
-  const userMessage: ChatCompletionMessage = { role: 'user', content: input };
+  const userMessage: ChatCompletionMessage = { role: "user", content: input };
 
-  if (!currentThreadId) {
-    onNewThread(input);
-  } else {
-    // Actualizar estado local
-    updateThreadWithUserMessage(currentThreadId, userMessage, setThreads);
+  let threadId = currentThreadId;
 
-
-
-    console.log('Guardando mensaje del usuario en Firestore:', {
-      threadId: currentThreadId,
-      role: 'user',
-      content: input,
-    });
-    await saveMessageToFirestore(currentThreadId, 'user', input);
-    
-    // Obtener respuesta del asistente
-    const assistantResponse = await getAssistantResponse(
-      currentThreadId,
-      threads,
-      { role: 'user', content: input },
-      setThreads
-    );
-    
-    // Guardar la respuesta del asistente en Firestore
-    if (assistantResponse) {
-      console.log('Guardando respuesta del asistente en Firestore:', {
-        threadId: currentThreadId,
-        role: 'assistant',
-        content: assistantResponse.content,
-      });
-      await saveMessageToFirestore(
-        currentThreadId,
-        'assistant',
-        assistantResponse.content
-      );
+  if (!threadId) {
+    try {
+      // Crear nuevo hilo y obtener su ID
+      threadId = await onNewThread(input);
+    } catch (error) {
+      console.error("Error al crear un nuevo hilo:", error);
+      alert("Hubo un problema al crear el hilo. Intenta nuevamente.");
+      return;
     }
   }
 
-  // Limpiar el campo de entrada
+  try {
+    // Actualizar estado local
+    updateThreadWithUserMessage(threadId, userMessage, setThreads);
+
+    // Guardar mensaje del usuario en Firestore
+    console.log("Guardando mensaje del usuario en el hilo:", {
+      threadId,
+      role: "user",
+      content: input,
+    });
+    await saveMessageToThread(threadId, "user", input);
+
+    // Obtener respuesta del asistente
+    const assistantResponse = await getAssistantResponse(
+      threadId,
+      threads,
+      userMessage,
+      setThreads
+    );
+
+    if (assistantResponse) {
+      try {
+        // Guardar respuesta del asistente en Firestore
+        await saveMessageToThread(threadId, "assistant", assistantResponse.content);
+      } catch (error) {
+        console.error("Error al guardar la respuesta del asistente:", error);
+        alert("Hubo un problema al guardar la respuesta del asistente.");
+      }
+    }
+  } catch (error) {
+    console.error("Error en el manejo del formulario:", error);
+    alert("Ocurrió un problema al procesar tu mensaje. Intenta nuevamente.");
+  }
+
   clearInput(setInput);
 };

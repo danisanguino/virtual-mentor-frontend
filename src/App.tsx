@@ -12,12 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/firebaseConfig';
 
-
 import './App.css';
 
-
 function App() {
-
   const [threads, setThreads] = useState<IThread[]>([]); 
   const [currentThreadId, setCurrentThreadId] = useState<string>(''); 
   const [input, setInput] = useState<string>(''); 
@@ -52,19 +49,20 @@ function App() {
   }, []);
   
 
-  const onNewThread = (initialMessage: string) => {
+  const onNewThread = async (initialMessage: string): Promise<string> => {
     const newThread: IThread = {
       id: crypto.randomUUID(),
       title: `Hilo: ${initialMessage}`,
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: `Eres un asistente virtual de Virtual Mentor. Responde a todo lo que te pregunten, si te preguntan sobre Virtual Mentor coge la información de la empresa: ${infoCompany}`,
         },
-        { role: 'user', content: initialMessage },
+        { role: "user", content: initialMessage },
       ],
     };
-    createNewThread(newThread, setThreads, setCurrentThreadId);
+  
+    return await createNewThread(newThread, setThreads, setCurrentThreadId);
   };
   
   const onThreadSelect = (threadId: string) => {
@@ -78,7 +76,7 @@ function App() {
       <Conversations currentThreadId={currentThreadId} threads={threads} />
       <SendMessage
         input={input}
-        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)}
+        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)} // Llamamos a handleForm
         handleChange={(e) => handleChange(e, setInput)} 
       />
       <button onClick={() => handleLogOut(navigate)}>Cerrar Sesión</button>
