@@ -25,19 +25,21 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Recuperar los datos de usuario desde Firestore
     fetchUserData(setUserName, setThreads);
   }, []);
 
   useEffect(() => {
+    console.log('Estado actual de threads:', threads);
+  }, [threads]);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log("Usuario autenticado:", user);
-        setUserName(user.displayName || "Usuario");
+        setUserName(user.displayName || 'Usuario');
         try {
-          await fetchUserData(setUserName, setThreads);
+          await fetchUserData(setUserName, setThreads); // Llama a la función sin necesidad de setUserName si no lo necesitas
         } catch (error) {
-          console.error("Error al cargar los datos del usuario:", error);
+          console.error('Error al cargar los datos del usuario:', error);
         }
       } else {
         console.log("No hay usuario autenticado.");
