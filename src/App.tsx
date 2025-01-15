@@ -69,11 +69,15 @@ function App() {
     setCurrentThreadId(threadId);
   };
 
+  const handleThreadsUpdate = (updatedThreads: IThread[]) => {
+    setThreads(updatedThreads);
+  };
+
   return (
     <>
       <h1>Hola {userName} soy tu Asistente Virtual Mentor</h1>
-      <Threads threads={threads} currentThreadId={currentThreadId} onThreadSelect={onThreadSelect} onNewThread={onNewThread} />
-      <Conversations currentThreadId={currentThreadId} threads={threads} />
+      <Threads threads={threads} currentThreadId={currentThreadId} onThreadSelect={onThreadSelect} onNewThread={onNewThread} setThreads={setThreads} onThreadsUpdate={handleThreadsUpdate} />
+      <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
       <SendMessage
         input={input}
         handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)} // Llamamos a handleForm

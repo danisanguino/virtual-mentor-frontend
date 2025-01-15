@@ -1,6 +1,5 @@
 import { db, auth } from '../firebase/firebaseConfig';
-import { getDocs, collection, doc, setDoc, addDoc, Timestamp } from 'firebase/firestore';
-import { infoCompany } from './info';
+import { getDocs, collection, doc, setDoc, addDoc, Timestamp, query, orderBy, deleteDoc, where } from 'firebase/firestore';
 
 // Función para obtener los datos del usuario y cargar los hilos
 export const fetchUserData = async (
@@ -17,8 +16,10 @@ export const fetchUserData = async (
         threadsSnapshot.docs.map(async (doc) => {
           const data = doc.data();
 
-          // Obtener mensajes desde la subcolección
-          const messagesSnapshot = await getDocs(collection(db, 'users', user.uid, 'threads', doc.id, 'messages'));
+          // get messages from collection and sort by createdAt
+          const messagesRef = collection(db, 'users', user.uid, 'threads', doc.id, 'messages');
+          const messagesQuery = query(messagesRef, orderBy('createdAt'));
+          const messagesSnapshot = await getDocs(messagesQuery);
           const messages = messagesSnapshot.docs.map((messageDoc) => ({
             ...messageDoc.data(),
             id: messageDoc.id,
@@ -39,7 +40,7 @@ export const fetchUserData = async (
   }
 };
 
-// Función para crear un nuevo hilo
+// Create a new thread
 export const createNewThread = async (
   newThread: any,
   setThreads: React.Dispatch<React.SetStateAction<any[]>>,
@@ -48,8 +49,8 @@ export const createNewThread = async (
   const user = auth.currentUser;
   if (user) {
     const threadsRef = collection(db, "users", user.uid, "threads");
-    const newThreadRef = doc(threadsRef); // Crea un nuevo documento con ID automático
-    const threadId = newThreadRef.id; // Obtenemos el ID del hilo
+    const newThreadRef = doc(threadsRef); 
+    const threadId = newThreadRef.id; 
 
     await setDoc(newThreadRef, {
       title: newThread.title,
@@ -61,7 +62,7 @@ export const createNewThread = async (
     // Guardar el mensaje del sistema en la subcolección de mensajes
     await addDoc(messagesRef, {
       role: "system",
-      content: newThread.messages[0].content, // Mensaje del sistema
+      content: newThread.messages[0].content, 
       createdAt: Timestamp.now(),
     });
 
@@ -74,42 +75,6 @@ export const createNewThread = async (
   }
 };
 
-// Función para guardar un mensaje en Firestore
-// export const saveMessageToFirestore = async (
-//   threadId: string, // ID del hilo donde se quiere guardar el mensaje
-//   role: string,     // Rol del usuario (user o assistant)
-//   content: string   // El contenido del mensaje
-// ) => {
-//   try {
-//     const userId = auth.currentUser?.uid; // Asegúrate de tener un usuario autenticado
-//     if (!userId) throw new Error('No hay un usuario autenticado');
-
-//     // Referencia al mensaje en Firestore, en la colección de threads y subcolección de messages
-//     const messageRef = doc(
-//       db,
-//       `users/${userId}/threads/${threadId}/messages/${crypto.randomUUID()}`
-//     );
-
-//     // Los datos del mensaje
-//     const messageData = {
-//       role,
-//       content,
-//       createdAt: Timestamp.now(), // Usamos Timestamp ahora
-//     };
-
-//     console.log('Guardando mensaje en Firestore:', {
-//       path: messageRef.path,
-//       data: messageData,
-//     });
-
-//     // Guardamos el mensaje
-//     await setDoc(messageRef, messageData);
-
-//     console.log('Mensaje guardado con éxito.');
-//   } catch (error) {
-//     console.error('Error al guardar el mensaje en Firestore:', error);
-//   }
-// };
 
 // Función para guardar un mensaje en un hilo existente
 
@@ -148,3 +113,55 @@ export const saveMessageToThread = async (
   }
 };
 
+
+export const deleteThread = async (threadId: string) => {
+  try {
+    const userId = auth.currentUser?.uid;
+    if (!userId) throw new Error('No hay un usuario autenticado.');
+
+    const threadRef = doc(db, `users/${userId}/threads/${threadId}`);
+    console.log(`Intentando eliminar hilo con referencia: ${threadRef.path}`);
+
+    await deleteDoc(threadRef);
+    console.log(`Hilo con ID ${threadId} eliminado correctamente de Firestore.`);
+  } catch (error) {
+    const errorMessage = (error as any).message || error;
+    console.error('Error al eliminar el hilo de Firestore:', errorMessage);
+    throw error; // Re-lanza el error para que puedas ver los detalles.
+  }
+};
+
+// Función para obtener los hilos desde Firestore
+// export const getThreads = async () => {
+//   const user = auth.currentUser;
+//   if (!user) throw new Error("No hay un usuario autenticado.");
+
+//   try {
+//     const threadsSnapshot = await getDocs(collection(db, 'users', user.uid, 'threads'));
+//     const threads = await Promise.all(
+//       threadsSnapshot.docs.map(async (doc) => {
+//         const data = doc.data();
+
+//         // Obtener mensajes del hilo
+//         const messagesRef = collection(db, 'users', user.uid, 'threads', doc.id, 'messages');
+//         const messagesQuery = query(messagesRef, orderBy('createdAt'));
+//         const messagesSnapshot = await getDocs(messagesQuery);
+//         const messages = messagesSnapshot.docs.map((messageDoc) => ({
+//           ...messageDoc.data(),
+//           id: messageDoc.id,
+//         }));
+
+//         return {
+//           id: doc.id,
+//           title: data.title || 'Untitled',
+//           messages: messages,
+//         };
+//       })
+//     );
+
+//     return threads;
+//   } catch (error) {
+//     console.error("Error al obtener los hilos:", error);
+//     throw error;
+//   }
+// };

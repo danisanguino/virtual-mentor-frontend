@@ -15,11 +15,14 @@ export interface ThreadListProps {
   currentThreadId: string;
   onThreadSelect: (threadId: string) => void;
   onNewThread: (initialMessage: string) => void;
+  setThreads: React.Dispatch<React.SetStateAction<IThread[]>>;
+  onThreadsUpdate: (updatedThreads: IThread[]) => void;
 }
 
 export interface ConversationsListProps {
   threads: IThread[];
   currentThreadId: string;
+  userName: string | null;
 }
 
 export interface SendMessageProps {

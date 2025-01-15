@@ -10,3 +10,4 @@ export const handleLogOut = async (navigate: ReturnType<typeof useNavigate>) => 
     console.error("Error al cerrar sesión: ", error);
   }
 };
+
