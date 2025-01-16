@@ -11,6 +11,7 @@ import { handleLogOut } from './utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/firebaseConfig';
+import { greeting } from './utils/greeting';
 
 import './App.css';
 
@@ -75,8 +76,15 @@ function App() {
 
   return (
     <>
-      <h1>Hola {userName} soy tu Asistente Virtual Mentor</h1>
-      <Threads threads={threads} currentThreadId={currentThreadId} onThreadSelect={onThreadSelect} onNewThread={onNewThread} setThreads={setThreads} onThreadsUpdate={handleThreadsUpdate} />
+      <h1>{greeting(new Date().getHours())} {userName} soy tu Asistente Virtual Mentor</h1>
+      <Threads   
+        threads={threads} 
+        currentThreadId={currentThreadId} 
+        onThreadSelect={onThreadSelect} 
+        onNewThread={onNewThread} 
+        setThreads={setThreads} 
+        onThreadsUpdate={handleThreadsUpdate}
+      />
       <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
       <SendMessage
         input={input}

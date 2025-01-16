@@ -1,5 +1,5 @@
 import { db, auth } from '../firebase/firebaseConfig';
-import { getDocs, collection, doc, setDoc, addDoc, Timestamp, query, orderBy, deleteDoc, where } from 'firebase/firestore';
+import { getDocs, collection, doc, setDoc, addDoc, Timestamp, query, orderBy, deleteDoc, where, writeBatch } from 'firebase/firestore';
 
 // Función para obtener los datos del usuario y cargar los hilos
 export const fetchUserData = async (
@@ -115,53 +115,33 @@ export const saveMessageToThread = async (
 
 
 export const deleteThread = async (threadId: string) => {
-  try {
-    const userId = auth.currentUser?.uid;
-    if (!userId) throw new Error('No hay un usuario autenticado.');
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      // Referencia al hilo en la base de datos
+      const threadRef = doc(db, `users/${user.uid}/threads/${threadId}`);
 
-    const threadRef = doc(db, `users/${userId}/threads/${threadId}`);
-    console.log(`Intentando eliminar hilo con referencia: ${threadRef.path}`);
+      // Primero, eliminar todos los mensajes de la subcolección 'messages'
+      const messagesRef = collection(db, `users/${user.uid}/threads/${threadId}/messages`);
+      const messagesSnapshot = await getDocs(messagesRef);
+      const batch = writeBatch(db);
 
-    await deleteDoc(threadRef);
-    console.log(`Hilo con ID ${threadId} eliminado correctamente de Firestore.`);
-  } catch (error) {
-    const errorMessage = (error as any).message || error;
-    console.error('Error al eliminar el hilo de Firestore:', errorMessage);
-    throw error; // Re-lanza el error para que puedas ver los detalles.
+      messagesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref); // Eliminar cada mensaje
+      });
+
+      // Eliminar el hilo
+      batch.delete(threadRef); // Eliminar el documento del hilo
+
+      // Ejecutar todas las eliminaciones en un solo lote
+      await batch.commit();
+
+      console.log(`Hilo con ID ${threadId} y sus mensajes eliminados correctamente de Firestore.`);
+    } catch (error) {
+      console.error("Error al eliminar el hilo y sus mensajes de Firestore:", error);
+      throw error; // Lanza el error para que pueda ser manejado en el componente
+    }
+  } else {
+    console.error("No hay un usuario autenticado.");
   }
 };
-
-// Función para obtener los hilos desde Firestore
-// export const getThreads = async () => {
-//   const user = auth.currentUser;
-//   if (!user) throw new Error("No hay un usuario autenticado.");
-
-//   try {
-//     const threadsSnapshot = await getDocs(collection(db, 'users', user.uid, 'threads'));
-//     const threads = await Promise.all(
-//       threadsSnapshot.docs.map(async (doc) => {
-//         const data = doc.data();
-
-//         // Obtener mensajes del hilo
-//         const messagesRef = collection(db, 'users', user.uid, 'threads', doc.id, 'messages');
-//         const messagesQuery = query(messagesRef, orderBy('createdAt'));
-//         const messagesSnapshot = await getDocs(messagesQuery);
-//         const messages = messagesSnapshot.docs.map((messageDoc) => ({
-//           ...messageDoc.data(),
-//           id: messageDoc.id,
-//         }));
-
-//         return {
-//           id: doc.id,
-//           title: data.title || 'Untitled',
-//           messages: messages,
-//         };
-//       })
-//     );
-
-//     return threads;
-//   } catch (error) {
-//     console.error("Error al obtener los hilos:", error);
-//     throw error;
-//   }
-// };

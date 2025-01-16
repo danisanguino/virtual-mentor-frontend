@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThreadListProps } from '../interfaces/interfaces';
+import { ThreadListProps, IThread } from '../interfaces/interfaces';
 import { deleteThread } from '../utils/firestore';
 
 export const Threads: React.FC<ThreadListProps> = ({
@@ -7,10 +7,11 @@ export const Threads: React.FC<ThreadListProps> = ({
   currentThreadId,
   onThreadSelect,
   onNewThread,
+  setThreads, // Asegúrate de recibir setThreads como prop
   onThreadsUpdate,
 }) => {
   const [newThreadTitle, setNewThreadTitle] = React.useState<string>('');
- 
+
   // Manejar el cambio en el título del nuevo hilo
   const handleNewThreadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewThreadTitle(e.target.value);
@@ -25,19 +26,26 @@ export const Threads: React.FC<ThreadListProps> = ({
     }
   };
 
-  const handleDeleteThread = async (threadId: string) => {
-    try {
-      await deleteThread(threadId); // Eliminar el hilo de Firestore
-  
-      // Actualizar la lista local de hilos
-      const updatedThreads = threads.filter((thread) => thread.id !== threadId);
-      onThreadsUpdate(updatedThreads); // Nuevo callback para actualizar los hilos
-  
-      alert(`Hilo con ID ${threadId} eliminado correctamente.`);
-    } catch (error) {
-      console.error('Error al eliminar el hilo:', error);
-      alert('Ocurrió un error al intentar eliminar el hilo. Inténtalo de nuevo.');
+  const handleDeleteThread = async (threadId: string, threads: IThread[], setThreads: React.Dispatch<React.SetStateAction<IThread[]>>) => {
+    
+    const confirmDelete = window.confirm('¿Estás seguro de que quieres eliminar este hilo?');
+    
+    if (!confirmDelete) {
+      return;
     }
+    
+    try {
+      // Eliminar el hilo de Firestore y sus mensajes
+      await deleteThread(threadId);
+  
+      // Actualizar los hilos en el estado local
+      const updatedThreads = threads.filter((thread) => thread.id !== threadId);
+      setThreads(updatedThreads);
+  
+      console.log(`Hilo con ID ${threadId} eliminado correctamente.`);
+    } catch (error) {
+      console.error("Error al eliminar el hilo:", error);
+    };
   };
 
   return (
@@ -60,12 +68,10 @@ export const Threads: React.FC<ThreadListProps> = ({
             className={currentThreadId === thread.id ? 'selected' : ''}
           >
             {thread.title}
-            <button onClick={() => handleDeleteThread(thread.id)}>Eliminar</button>
+            <button onClick={() => handleDeleteThread(thread.id, threads, setThreads)}>Eliminar</button>
           </li>
         ))}
       </ul>
     </div>
   );
 };
-
-
