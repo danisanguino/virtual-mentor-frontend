@@ -14,6 +14,7 @@ import { auth } from './firebase/firebaseConfig';
 import { greeting } from './utils/greeting';
 
 import './App.css';
+import { unsubscribe } from './utils/unsuscribe';
 
 function App() {
   const [threads, setThreads] = useState<IThread[]>([]); 
@@ -25,28 +26,11 @@ function App() {
   useEffect(() => {
     fetchUserData(setUserName, setThreads);
   }, []);
-
-  useEffect(() => {
-    console.log('Estado actual de threads:', threads);
-  }, [threads]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUserName(user.displayName || 'Usuario');
-        try {
-          await fetchUserData(setUserName, setThreads); // Llama a la función sin necesidad de setUserName si no lo necesitas
-        } catch (error) {
-          console.error('Error al cargar los datos del usuario:', error);
-        }
-      } else {
-        console.log("No hay usuario autenticado.");
-        setUserName(null);
-        setThreads([]);
-      }
-    });
   
-    return () => unsubscribe(); // Limpia el listener al desmontar
+
+  useEffect(() => {
+    const unsubscribeHandler = unsubscribe(auth, setUserName, setThreads); // Usar la función
+    return () => unsubscribeHandler(); // Limpiar al desmontar
   }, []);
   
 
@@ -88,7 +72,7 @@ function App() {
       <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
       <SendMessage
         input={input}
-        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)} // Llamamos a handleForm
+        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, onNewThread)} 
         handleChange={(e) => handleChange(e, setInput)} 
       />
       <button onClick={() => handleLogOut(navigate)}>Cerrar Sesión</button>

@@ -8,7 +8,6 @@ export const Threads: React.FC<ThreadListProps> = ({
   onThreadSelect,
   onNewThread,
   setThreads, // Asegúrate de recibir setThreads como prop
-  onThreadsUpdate,
 }) => {
   const [newThreadTitle, setNewThreadTitle] = React.useState<string>('');
 
@@ -26,6 +25,7 @@ export const Threads: React.FC<ThreadListProps> = ({
     }
   };
 
+  
   const handleDeleteThread = async (threadId: string, threads: IThread[], setThreads: React.Dispatch<React.SetStateAction<IThread[]>>) => {
     
     const confirmDelete = window.confirm('¿Estás seguro de que quieres eliminar este hilo?');
