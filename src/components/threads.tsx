@@ -49,16 +49,8 @@ export const Threads: React.FC<ThreadListProps> = ({
   };
 
   return (
-    <div className="threads">
-      <div className="new-thread">
-        <input
-          type="text"
-          placeholder="Nuevo hilo"
-          value={newThreadTitle}
-          onChange={handleNewThreadChange}
-        />
-        <button onClick={handleNewThreadSubmit}>Crear hilo</button>
-      </div>
+    <div className="container-thread">
+      <h2 className='container-thread__title'>Hilos</h2>
 
       <ul>
         {threads.map((thread) => (
@@ -68,10 +60,25 @@ export const Threads: React.FC<ThreadListProps> = ({
             className={currentThreadId === thread.id ? 'selected' : ''}
           >
             {thread.title}
-            <button onClick={() => handleDeleteThread(thread.id, threads, setThreads)}>Eliminar</button>
+            <button onClick={() => handleDeleteThread(thread.id, threads, setThreads)} className='container-thread__title--button-delete-thread'>Eliminar</button>
           </li>
         ))}
       </ul>
+
+      <div className="container-thread__new-thread">
+        <p>Crear un nuevo hilo</p>
+        <div className="container-thread__new-thread--separator">
+          <input
+            type="text"
+            placeholder="Nombre del hilo"
+            value={newThreadTitle}
+            onChange={handleNewThreadChange}
+            className='container-thread__new-thread--input'
+          />
+          <button onClick={handleNewThreadSubmit} className='button button--create-thread'>Crear hilo</button>
+        </div>
+      </div>
+
     </div>
   );
 };

@@ -1,5 +1,3 @@
-import { Auth } from "firebase/auth";
-
 export interface ChatCompletionMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -31,6 +29,10 @@ export interface SendMessageProps {
   input: string;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleForm: (e: React.FormEvent) => void;
+}
+
+export interface HeaderProps {
+  userName: string | null;
 }
 
 

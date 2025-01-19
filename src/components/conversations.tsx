@@ -1,8 +1,6 @@
 import { ConversationsListProps } from '../interfaces/interfaces';
 
-
 export const Conversations: React.FC<ConversationsListProps> = ({currentThreadId, threads, userName}) => {
-  
   
   return (
     <div>
@@ -19,6 +17,6 @@ export const Conversations: React.FC<ConversationsListProps> = ({currentThreadId
         ) : (
           <p>Crea un hilo para iniciar una conversación.</p>
         )}
-      </div>
+    </div>
   )
 }

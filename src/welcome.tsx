@@ -59,13 +59,10 @@ export const Welcome = () => {
       } else {
         await signInWithEmail(email, password);
       }
-  
-      console.log("Inicio de sesión exitoso. Redirigiendo...");
       navigate("/app");
     } catch (error: any) {
-      alert(error.message); // Muestra el error al usuario
-      // Opcional: Elimina el log del error si no es necesario
-      console.error("Error en handleAuth:", error.message);
+      alert(error.message); 
+   
     } finally {
       setPassword("");
     }
@@ -83,25 +80,31 @@ export const Welcome = () => {
 
 
   return (
-    <>
-      <h1>Bienvenido al asistente Virtual Mentor</h1>
+    <div className='container-login'>
+
+      <img src="" alt="" className='container-login__logo'/>
+
+      <h1 className='container-login__title '>Bienvenido a tu asistente virtual</h1>
       
-      <div>
+      <div className='container-login__form form-login'>
+        
         {isRegister && (
           <input
             type="text"
             placeholder="Nombre"
             value={name}
             onChange={handleChangeName}
+            className="form-login__input"
             required
           />
         )}
 
         <input
           type="email"
-          placeholder="Correo"
+          placeholder="Email"
           value={email}
           onChange={handleChangeEmail}
+          className="form-login__input"
           required
         />
 
@@ -110,22 +113,29 @@ export const Welcome = () => {
           placeholder="Contraseña"
           value={password}
           onChange={handleChangePassword}
+          className="form-login__input"
           required
         />
 
-        <button onClick={handleAuth}>
+        <button onClick={handleAuth} className='button button--primary'>
           {isRegister ? "Registrar" : "Iniciar Sesión"}
         </button>
 
-        {/* Cambiar entre registro e inicio de sesión */}
-        <button onClick={() => setIsRegister(!isRegister)}>
+        <span onClick={() => setIsRegister(!isRegister)} className="interactive-text">
           {isRegister ? "¿Tienes cuenta? Inicia Sesión" : "¿No tienes cuenta? Regístrate"}
-        </button>
-
-        <button onClick={handleGoogleSignIn}>
-          Iniciar Sesión con Google
-        </button>
+        </span>
       </div>
-    </>
+
+      <button onClick={handleGoogleSignIn} className='button button--google'>
+        <img src="" alt="" />
+        <p>Iniciar Sesión con Google</p>
+      </button>
+      
+      <span className="container-login__terms">
+        <input type="checkbox" required />
+        <p>Acepto política privacidad. Leer</p>
+      </span>
+
+    </div>
 )};
 
