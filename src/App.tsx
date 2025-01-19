@@ -11,7 +11,7 @@ import { unsubscribe } from './utils/unsuscribe';
 import { onNewThread } from './utils/onNewThread';
 import { Header } from './components/header';
 
-import './App.css';
+// import './css/app.css';
 
 function App() {
   const [threads, setThreads] = useState<IThread[]>([]); 
