@@ -11,7 +11,7 @@ import { unsubscribe } from './utils/unsuscribe';
 import { onNewThread } from './utils/onNewThread';
 import { Header } from './components/header';
 
-// import './css/app.css';
+import './css/app.css';
 
 function App() {
   const [threads, setThreads] = useState<IThread[]>([]); 
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <>
-      <Header userName={userName} />
+      <Header userName={userName}/>
 
       <Threads   
         threads={threads} 
