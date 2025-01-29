@@ -15,7 +15,7 @@ export const getAssistantResponse = async (
   threads: IThread[],
   userMessage: ChatCompletionMessage,
   setThreads: React.Dispatch<React.SetStateAction<IThread[]>>
-): Promise<ChatCompletionMessage | null> => { // Se añade Promise<ChatCompletionMessage | null>
+): Promise<ChatCompletionMessage | null> => { 
   try {
     // Encontrar el hilo actual
     const currentThread = threads.find((t) => t.id === currentThreadId);

@@ -12,7 +12,7 @@ export const handleForm = async (
   threads: IThread[],
   setThreads: React.Dispatch<React.SetStateAction<IThread[]>>,
   setInput: React.Dispatch<React.SetStateAction<string>>,
-  onNewThread: (initialMessage: string) => Promise<string> // Modificamos para que devuelva el ID del hilo
+  onNewThread: (initialMessage: string) => Promise<string> 
 ) => {
   e.preventDefault();
 

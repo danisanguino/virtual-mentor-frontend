@@ -1,0 +1,33 @@
+@use '../base/variables' as v;
+
+.container-thread {
+  background-color: v.$lightGreyPlus;
+  border-right: 1px solid v.$lightGrey;
+  width: 400px;
+  padding: 20px;
+  height: calc(100vh - 190px);
+}
+
+.container-thread__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container-thread__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.7rem;
+}
+
+.container-thread__item:hover {
+  color: v.$lightGrey;
+}
+
+.container-thread__button-delete-thread {
+  background-color: transparent;
+  border: none;
+}
+

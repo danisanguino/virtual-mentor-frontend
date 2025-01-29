@@ -80,62 +80,64 @@ export const Welcome = () => {
 
 
   return (
-    <div className='container-login'>
 
-      <img src="" alt="" className='container-login__logo'/>
+    <section className='container-welcome'>
+      <div className='welcome'>
+        <div className='container-login'>
+          <img src="public/logo-virtualmentor-welcome.svg" alt="Logo Virtual Mentor" className='container-login__logo'/>
+          <h1 className='container-login__title'>Bienvenido a tu asistente virtual</h1>
+          <div className='container-login__form form-login'>
+            
+            {isRegister && (
+              <input
+                type="text"
+                placeholder="Nombre"
+                value={name}
+                onChange={handleChangeName}
+                className="form-login__input"
+                required
+              />
+            )}
 
-      <h1 className='container-login__title '>Bienvenido a tu asistente virtual</h1>
-      
-      <div className='container-login__form form-login'>
-        
-        {isRegister && (
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={name}
-            onChange={handleChangeName}
-            className="form-login__input"
-            required
-          />
-        )}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={handleChangeEmail}
+              className="form-login__input"
+              required
+            />
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={handleChangeEmail}
-          className="form-login__input"
-          required
-        />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={handleChangePassword}
+              className="form-login__input"
+              required
+            />
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={handleChangePassword}
-          className="form-login__input"
-          required
-        />
+            <button onClick={handleAuth} className='button button--primary'>
+              {isRegister ? "Registrar" : "Iniciar Sesión"}
+            </button>
 
-        <button onClick={handleAuth} className='button button--primary'>
-          {isRegister ? "Registrar" : "Iniciar Sesión"}
-        </button>
+            <span onClick={() => setIsRegister(!isRegister)} className="form-login__interactive-text">
+              {isRegister ? "¿Estás registrado? Inicia sesión aqui" : "¿No tienes cuenta? Regístrate"}
+            </span>
+          </div>
 
-        <span onClick={() => setIsRegister(!isRegister)} className="interactive-text">
-          {isRegister ? "¿Tienes cuenta? Inicia Sesión" : "¿No tienes cuenta? Regístrate"}
-        </span>
+          <button onClick={handleGoogleSignIn} className='button button--google'>
+            <img src="public/google-logo.svg" alt="Google" />
+            <p>Iniciar Sesión con Google</p>
+          </button>
+          
+          <div className="container-login__terms">
+            <input type="checkbox" required />
+            <p>Acepto política privacidad. Leer</p>
+          </div>
+
+        </div>
       </div>
-
-      <button onClick={handleGoogleSignIn} className='button button--google'>
-        <img src="" alt="" />
-        <p>Iniciar Sesión con Google</p>
-      </button>
-      
-      <span className="container-login__terms">
-        <input type="checkbox" required />
-        <p>Acepto política privacidad. Leer</p>
-      </span>
-
-    </div>
+    </section>
 )};
 

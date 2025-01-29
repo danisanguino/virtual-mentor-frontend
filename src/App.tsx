@@ -44,25 +44,29 @@ function App() {
     <>
       <Header userName={userName}/>
 
-      <Threads   
-        threads={threads} 
-        currentThreadId={currentThreadId} 
-        onThreadSelect={onThreadSelect}
-        onNewThread={(initialMessage) => onNewThread(initialMessage, setThreads, setCurrentThreadId)}
-        setThreads={setThreads} 
-        onThreadsUpdate={handleThreadsUpdate}
-      />
+      <div className='content'>
+        <Threads   
+          threads={threads} 
+          currentThreadId={currentThreadId} 
+          onThreadSelect={onThreadSelect}
+          onNewThread={(initialMessage) => onNewThread(initialMessage, setThreads, setCurrentThreadId)}
+          setThreads={setThreads} 
+          onThreadsUpdate={handleThreadsUpdate}
+        />
+      <div className='container-conversation'>
+        <div className='container-conversation__content'>
+          <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
 
-      <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
-
-      <SendMessage
-        input={input}
-        handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, (initialMessage) =>
-          onNewThread(initialMessage, setThreads, setCurrentThreadId)
-        )}
-        handleChange={(e) => handleChange(e, setInput)} 
-      />
-
+          <SendMessage
+            input={input}
+            handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, (initialMessage) =>
+              onNewThread(initialMessage, setThreads, setCurrentThreadId)
+            )}
+            handleChange={(e) => handleChange(e, setInput)} 
+          />
+        </div>
+      </div>
+    </div>
     </>
   );
 }

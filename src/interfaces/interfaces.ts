@@ -27,7 +27,7 @@ export interface ConversationsListProps {
 
 export interface SendMessageProps {
   input: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleForm: (e: React.FormEvent) => void;
 }
 

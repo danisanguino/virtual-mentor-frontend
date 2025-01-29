@@ -52,18 +52,27 @@ export const Threads: React.FC<ThreadListProps> = ({
     <div className="container-thread">
       <h2 className='container-thread__title'>Hilos</h2>
 
-      <ul>
+      <ul className="container-thread__list">
         {threads.map((thread) => (
           <li
             key={thread.id}
             onClick={() => onThreadSelect(thread.id)}
-            className={currentThreadId === thread.id ? 'selected' : ''}
+            className={`container-thread__item ${currentThreadId === thread.id ? 'container-thread__item--selected' : ''}`}
           >
             {thread.title}
-            <button onClick={() => handleDeleteThread(thread.id, threads, setThreads)} className='container-thread__title--button-delete-thread'>Eliminar</button>
+            <button
+              onClick={() => handleDeleteThread(thread.id, threads, setThreads)}
+              className="container-thread__button-delete-thread"
+            >
+              <img
+                src="public/delete-threads.svg"
+                alt="Eliminar hilo"
+                className="container-thread__button-delete-thread--icon"
+              />
+            </button>
           </li>
         ))}
-      </ul>
+       </ul>
 
       <div className="container-thread__new-thread">
         <p>Crear un nuevo hilo</p>

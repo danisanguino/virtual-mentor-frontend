@@ -10,12 +10,13 @@ export const Header: React.FC<HeaderProps>  = ({ userName }) => {
   return (
     <div className='header'>
       
-      <img src="" alt="Virtual Mentor logo" className='header__logo' />
+      <img src="public/logo-virtualmentor-welcome.svg" alt="Virtual Mentor logo" className='header__logo' />
 
       <div className='header__container'>
-        <a className='header__container--text'>{greeting(new Date().getHours())} {userName}, ¿en qué puedo ayudarte hoy?</a>
-        <button onClick={() => handleLogOut(navigate)} className='header__container--button'>Cerrar Sesión</button>
+        <a className='header__text'>{greeting(new Date().getHours())} {userName}, ¿en qué puedo ayudarte hoy?</a>
+        <button onClick={() => handleLogOut(navigate)} className='header__button'><img src="public/logout.svg" alt='cerrar sesión'/></button>
       </div>
+
     </div>
   )
 }

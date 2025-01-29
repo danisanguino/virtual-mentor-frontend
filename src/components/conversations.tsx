@@ -3,7 +3,7 @@ import { ConversationsListProps } from '../interfaces/interfaces';
 export const Conversations: React.FC<ConversationsListProps> = ({currentThreadId, threads, userName}) => {
   
   return (
-    <div>
+    <div className='container-conversation'>
         {currentThreadId ? (
           threads
             .find((thread) => thread.id === currentThreadId)
