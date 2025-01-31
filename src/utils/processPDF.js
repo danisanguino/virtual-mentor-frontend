@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const pdfPath = path.resolve(__dirname, '../assets/mv.pdf');  
-const jsonOutputPath = path.resolve(__dirname, '../data/fragments.json');
+const jsonOutputPath = path.resolve(__dirname, '../../public/fragments.json');
 
 
 const processPdf = async (pdfPath, jsonOutputPath) => {
