@@ -21,21 +21,21 @@
   border: none;
   font-size: 1.4rem;
   font-weight: 500;
-}
 
-.button--primary {
-  background: v.$grandientBlue;
-  color: v.$white;
-}
+  &--primary {
+    background: v.$grandientBlue;
+    color: v.$white;
+  }
 
-.button--google {
-  background: v.$lightGreyPlus;
-  border: 1px solid v.$lightGrey;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  font-weight: 400;
+  &--google {
+    background: v.$lightGreyPlus;
+    border: 1px solid v.$lightGrey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: 400;
+  }
 }
 
 .form-login__interactive-text {
