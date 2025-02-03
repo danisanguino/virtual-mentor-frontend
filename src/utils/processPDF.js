@@ -11,25 +11,21 @@ const jsonOutputPath = path.resolve(__dirname, '../../public/fragments.json');
 
 
 const processPdf = async (pdfPath, jsonOutputPath) => {
+  
   try {
-    console.log("📖 Leyendo el archivo PDF...");
     const dataBuffer = fs.readFileSync(pdfPath);
-    
-    console.log("✅ Archivo PDF leído correctamente");
     const pdfData = await pdfParse(dataBuffer);
-    console.log("📄 PDF procesado");
-
 
     const jsonData = {
-      titulo: 'Virtual Mentor to RAG',
+      titulo: 'Virtual Mentor info, RAG to assistent',
       contenido: pdfData.text,
     };
 
     console.log("💾 Guardando JSON en", jsonOutputPath);
     fs.writeFileSync(jsonOutputPath, JSON.stringify(jsonData, null, 2));
-    console.log(`✅ JSON guardado correctamente en ${jsonOutputPath}`);
+
   } catch (error) {
-    console.error("❌ Error al procesar el PDF:", error);
+    console.error("❌ Error to process PDF:", error);
   }
 };
 

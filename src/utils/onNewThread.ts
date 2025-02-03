@@ -1,12 +1,10 @@
 import { IThread } from '../interfaces/interfaces';
 import { createNewThread } from './firestore';
 import { Dispatch, SetStateAction } from 'react';
-// import { infoCompany } from './info';
 
 const loadJSON = async () => {
-    const response = await fetch('../../public/fragments.json');
+    const response = await fetch('/fragments.json');
     const data = await response.json();
-    console.log(data);
     return data; 
 }
 
@@ -17,6 +15,7 @@ export const onNewThread = async (
 ): Promise<string> => {
 
   const jsonData = await loadJSON();
+  const jsonDataString = JSON.stringify(jsonData, null, 2);
 
   const newThread: IThread = {
     id: crypto.randomUUID(),
@@ -24,7 +23,7 @@ export const onNewThread = async (
     messages: [
       {
         role: 'system',
-        content: `Eres un asistente virtual de Virtual Mentor. Responde a todo lo que te pregunten, si te preguntan sobre Virtual Mentor coge la información de la empresa: ${jsonData}`,
+        content: `Eres un asistente virtual de Virtual Mentor conocedor de la banda the shooters usa la información de: ${jsonDataString}.`,
       },
       { role: 'user', content: initialMessage },
     ],
