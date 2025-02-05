@@ -28,7 +28,20 @@ export interface ConversationsListProps {
 export interface SendMessageProps {
   input: string;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleForm: (e: React.FormEvent) => void;
+  handleForm: (
+    e: React.FormEvent,
+    input: string,
+    currentThreadId: string,
+    threads: IThread[],
+    setThreads: React.Dispatch<React.SetStateAction<IThread[]>>,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    onNewThread: (initialMessage: string) => Promise<string>
+  ) => void;
+  currentThreadId: string;
+  threads: IThread[];
+  setThreads: React.Dispatch<React.SetStateAction<IThread[]>>;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  onNewThread: (initialMessage: string) => Promise<string>;
 }
 
 export interface HeaderProps {

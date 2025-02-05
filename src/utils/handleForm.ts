@@ -26,28 +26,18 @@ export const handleForm = async (
 
   if (!threadId) {
     try {
-      // Crear nuevo hilo y obtener su ID
       threadId = await onNewThread(input);
     } catch (error) {
-      console.error("Error al crear un nuevo hilo:", error);
       alert("Hubo un problema al crear el hilo. Intenta nuevamente.");
       return;
     }
   }
 
   try {
-    // Actualizar estado local
     updateThreadWithUserMessage(threadId, userMessage, setThreads);
-
-    // Guardar mensaje del usuario en Firestore
-    console.log("Guardando mensaje del usuario en el hilo:", {
-      threadId,
-      role: "user",
-      content: input,
-    });
     await saveMessageToThread(threadId, "user", input);
 
-    // Obtener respuesta del asistente
+
     const assistantResponse = await getAssistantResponse(
       threadId,
       threads,
@@ -71,3 +61,4 @@ export const handleForm = async (
 
   clearInput(setInput);
 };
+

@@ -40,6 +40,10 @@ function App() {
     setThreads(updatedThreads);
   };
 
+  const handleNewThread = (initialMessage: string) => {
+    return onNewThread(initialMessage, setThreads, setCurrentThreadId);
+  };
+
   return (
     <>
       <Header userName={userName}/>
@@ -59,10 +63,13 @@ function App() {
 
           <SendMessage
             input={input}
-            handleForm={(e) => handleForm(e, input, currentThreadId, threads, setThreads, setInput, (initialMessage) =>
-              onNewThread(initialMessage, setThreads, setCurrentThreadId)
-            )}
-            handleChange={(e) => handleChange(e, setInput)} 
+            handleForm={handleForm}
+            handleChange={(e) => handleChange(e, setInput)}
+            currentThreadId={currentThreadId}
+            threads={threads}
+            setThreads={setThreads}
+            setInput={setInput}
+            onNewThread={handleNewThread}  
           />
         </div>
       </div>
