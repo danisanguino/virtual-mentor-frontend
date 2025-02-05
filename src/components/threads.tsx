@@ -75,14 +75,14 @@ export const Threads: React.FC<ThreadListProps> = ({
        </ul>
 
       <div className="container-thread__new-thread">
-        <p>Crear un nuevo hilo</p>
-        <div className="container-thread__new-thread--separator">
+        <p>Crear hilo</p>
+        <div className="new-thread__container-form">
           <input
             type="text"
             placeholder="Nombre del hilo"
             value={newThreadTitle}
             onChange={handleNewThreadChange}
-            className='container-thread__new-thread--input'
+            className='form-content__input'
           />
           <button onClick={handleNewThreadSubmit} className='button button--create-thread'>Crear hilo</button>
         </div>

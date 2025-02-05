@@ -16,3 +16,8 @@ body {
 button {
   cursor: pointer;
 } 
+
+input, textarea {
+  outline: none;
+  font-family: v.$principalFont;
+}

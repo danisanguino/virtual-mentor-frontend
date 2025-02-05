@@ -14,7 +14,7 @@ export const SendMessage: React.FC<SendMessageProps> = ({input, handleForm, hand
           className='container-send-message__input'
     >
     </textarea>
-    <button type="submit" className='button button--send-message'>Enviar</button>
+    <button type="submit" className='button-send-message button--primary'>Enviar</button>
   </form>
 
   )

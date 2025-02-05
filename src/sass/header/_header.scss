@@ -10,30 +10,39 @@
   align-items: center;
   padding: 0 20px 0 20px;
   box-sizing: border-box;
+  position: relative;
+
+  &__logo {
+    height: 85px;
+  }
+
+  &__container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__text {
+    font-size: 2.0rem;
+    background: v.$grandientBlue; 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+  }
+  
+  &__button {
+    border: none;
+    background-color: transparent;
+
+    & img {
+      height: 35px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+  }
 }
 
-.header__logo {
-  height: 85px;
-}
 
-.header__container {
-  display: flex;
-  align-items: center;
-}
 
-.header__text {
-  font-size: 2.0rem;
-  background: v.$grandientBlue; 
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent; 
-}
 
-.header__button {
-  border: none;
-  background-color: transparent;
-}
-
-.header__button--img{
-  color: v.$pink;
-  color: #000;
-}

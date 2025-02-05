@@ -19,7 +19,7 @@ export const onNewThread = async (
 
   const newThread: IThread = {
     id: crypto.randomUUID(),
-    title: `Hilo: ${initialMessage}`,
+    title: initialMessage,
     messages: [
       {
         role: 'system',
