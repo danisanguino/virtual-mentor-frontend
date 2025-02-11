@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { signInWithEmail, signInWithGoogle, signUpWithEmail } from './firebase/firebaseAuthentication';
-import { Link, Route, useNavigate } from 'react-router-dom';
-import { Legal } from './legal';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export const Welcome = () => {
