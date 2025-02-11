@@ -23,7 +23,7 @@ export const onNewThread = async (
     messages: [
       {
         role: 'system',
-        content: `Eres un asistente virtual de Virtual Mentor conocedor de la banda the shooters usa la información de: ${jsonDataString}.`,
+        content: `Eres un asistente virtual de Virtual Mentor todo lo que pregunte los usuarios usa la información de: ${jsonDataString}.`,
       },
       { role: 'user', content: initialMessage },
     ],
