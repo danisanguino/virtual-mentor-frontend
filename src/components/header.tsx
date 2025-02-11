@@ -10,7 +10,7 @@ export const Header: React.FC<HeaderProps>  = ({ userName }) => {
   return (
     <div className='header'>
       
-      <img src="public/logo-virtualmentor-welcome.svg" alt="Virtual Mentor logo" className='header__logo' />
+      <img src="/logo-virtualmentor-welcome.svg" alt="Virtual Mentor logo" className='header__logo' />
 
       <div className='header__container'>
         <a className='header__text'>{greeting(new Date().getHours())} {userName}, ¿en qué puedo ayudarte hoy?</a>

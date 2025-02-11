@@ -97,7 +97,7 @@ export const Welcome = () => {
     <section className='container-welcome'>
       <div className='welcome'>
         <div className='container-login'>
-          <img src="public/logo-virtualmentor-welcome.svg" alt="Logo Virtual Mentor" className='container-login__logo'/>
+          <img src="/logo-virtualmentor-welcome.svg" alt="Logo Virtual Mentor" className='container-login__logo'/>
           <h1 className='container-login__title'>Bienvenido a tu asistente virtual</h1>
           <div className='container-login__form form-login'>
             
@@ -140,7 +140,7 @@ export const Welcome = () => {
           </div>
 
           <button onClick={handleGoogleSignIn} className='button button--google'>
-            <img src="public/google-logo.svg" alt="Google" />
+            <img src="/google-logo.svg" alt="Google" />
             <p>Iniciar Sesión con Google</p>
           </button>
           

@@ -65,7 +65,7 @@ export const Threads: React.FC<ThreadListProps> = ({
               className="container-thread__button-delete-thread"
             >
               <img
-                src="public/delete-threads.svg"
+                src="/delete-threads.svg"
                 alt="Eliminar hilo"
                 className="container-thread__button-delete-thread--icon"
               />
