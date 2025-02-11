@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { signInWithEmail, signInWithGoogle, signUpWithEmail } from './firebase/firebaseAuthentication';
-import { useNavigate } from 'react-router-dom';
+import { Link, Route, useNavigate } from 'react-router-dom';
+import { Legal } from './legal';
 
 
 export const Welcome = () => {
@@ -25,6 +26,16 @@ export const Welcome = () => {
   const validateEmail = (email: string) => {
     return email.includes("@") && email.includes(".");
   };
+
+  const acceptTerms = () => {
+    const checkbox = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    if (checkbox && checkbox.checked) {
+      return true;
+    } else {
+      alert("Debes aceptar los términos y condiciones");
+      return false;
+    }
+  }
 
   const validateFields = () => {
     if (!email || !password) {
@@ -53,7 +64,7 @@ export const Welcome = () => {
   const handleAuth = async () => {
     try {
       if (!validateFields()) return;
-  
+      if (!acceptTerms()) return;
       if (isRegister) {
         await signUpWithEmail(email, password, name);
       } else {
@@ -69,9 +80,12 @@ export const Welcome = () => {
   };
   
   const handleGoogleSignIn = async () => {
+    if (!acceptTerms()) return;
+
     try {
       await signInWithGoogle();
-      navigate("/app");
+    if (acceptTerms()) {
+      navigate("/app")    }
     } catch (error: any) {
       alert("Error: " + error.message);
     }
@@ -133,7 +147,7 @@ export const Welcome = () => {
           
           <div className="container-login__terms">
             <input type="checkbox" required />
-            <p>Acepto política privacidad. Leer</p>
+             <p>Acepto política privacidad. <Link to="/legal" target='_blank'>Ver más</Link></p>
           </div>
 
         </div>

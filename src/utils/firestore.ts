@@ -1,5 +1,5 @@
 import { db, auth } from '../firebase/firebaseConfig';
-import { getDocs, collection, doc, setDoc, addDoc, Timestamp, query, orderBy, deleteDoc, where, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, doc, setDoc, addDoc, Timestamp, query, orderBy, writeBatch } from 'firebase/firestore';
 
 // Función para obtener los datos del usuario y cargar los hilos
 export const fetchUserData = async (

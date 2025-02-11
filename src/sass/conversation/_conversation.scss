@@ -2,23 +2,23 @@
 
 .container-conversation {
   width: 100%;
-  height: calc(100vh - 200px);
 }
 
 .content-conversation-container {
-  overflow-y: auto;
   width: 100%;
   font-size: 1.6rem;
   margin-bottom: 10px;
-  height: calc(100vh - 324px);
+  height: calc(100vh - 324px); 
 }
 
 .content-conversation {
-  overflow-y: auto;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
   align-items: center;
-  justify-content: end;
+  // justify-content: flex-start;
+  overflow-y: auto; 
+  height: 100%; 
+  scroll-behavior: smooth; /* Hacer que el scroll sea suave */
 }
 
 .message {
@@ -27,7 +27,7 @@
   border-radius: 15px;
 
   &__user-message {
-    align-self: flex-end;
+    align-self: flex-end; 
   }
 
   &__bot-message {
