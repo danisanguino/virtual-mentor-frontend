@@ -9,21 +9,23 @@ export const fetchUserData = async (
   const user = auth.currentUser;
   if (user) {
     try {
+      // Get the user name from Firestore
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
-        setUserName(userSnap.data().name || "Usuario"); 
+        setUserName(userSnap.data().name || "Usuario");
       } else {
         setUserName("Usuario desconocido");
       }
 
-      
+      // Get threads from user
       const threadsSnapshot = await getDocs(collection(db, "users", user.uid, "threads"));
       const userThreads = await Promise.all(
         threadsSnapshot.docs.map(async (doc) => {
           const data = doc.data();
 
+          // get messages from threads and sort
           const messagesRef = collection(db, "users", user.uid, "threads", doc.id, "messages");
           const messagesQuery = query(messagesRef, orderBy("createdAt"));
           const messagesSnapshot = await getDocs(messagesQuery);
@@ -81,7 +83,7 @@ export const createNewThread = async (
   }
 };
 
-// Función para guardar un mensaje en un hilo existente
+
 export const saveMessageToThread = async (
   threadId: string, 
   role: string,     
@@ -104,8 +106,8 @@ export const saveMessageToThread = async (
       };
 
       await setDoc(newMessageRef, messageData);
-
       console.log("Mensaje guardado correctamente en el hilo:", threadId);
+
     } catch (error) {
       console.error("Error al guardar el mensaje en el hilo:", error);
     }
@@ -134,8 +136,8 @@ export const deleteThread = async (threadId: string) => {
 
      
       await batch.commit();
-
       console.log(`Hilo con ID ${threadId} y sus mensajes eliminados correctamente de Firestore.`);
+      
     } catch (error) {
       console.error("Error al eliminar el hilo y sus mensajes de Firestore:", error);
       throw error; 
