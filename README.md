@@ -1,6 +1,6 @@
 # Virtual Mentor Assistant (Beta)
 
-![Screenshot of Virtual Mentor Assistant](./assets/ai-virtual-mentor-assistant.jpg)
+![Screenshot of Virtual Mentor Assistant](src/assets/ai-virtual-mentor-assistant.jpg)
 
 
 Virtual Mentor Assistant is an online AI-powered assistant built with OpenAI, featuring RAG (Retrieval-Augmented Generation) capabilities. It extracts structured information from PDF documents and uses it to enhance user interactions. The project includes user authentication, conversation management, and a fully responsive frontend.
