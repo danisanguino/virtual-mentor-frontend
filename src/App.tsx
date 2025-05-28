@@ -57,9 +57,14 @@ function App() {
           setThreads={setThreads} 
           onThreadsUpdate={handleThreadsUpdate}
         />
+        got check
       <div className='container-conversation'>
         <div className='container-conversation__content'>
-          <Conversations currentThreadId={currentThreadId} threads={threads} userName={userName} />
+          <Conversations
+            currentThreadId={currentThreadId}
+            threads={threads}
+            userName={userName}
+          />
 
           <SendMessage
             input={input}
